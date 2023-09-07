@@ -138,6 +138,7 @@ func NewTokenLimiterMw(tokenExtractor TokenExtractor, limiterStore krakendrate.L
 	return func(next gin.HandlerFunc) gin.HandlerFunc {
 		return func(c *gin.Context) {
 			tokenKey := tokenExtractor(c)
+			fmt.Print("test test test")
 			if tokenKey == "" {
 				c.AbortWithError(http.StatusTooManyRequests, krakendrate.ErrLimited)
 				return
