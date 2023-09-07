@@ -61,10 +61,10 @@ func NewRateLimiterMw(logger logging.Logger, next krakendgin.HandlerFactory) kra
 			switch strategy := strings.ToLower(cfg.Strategy); strategy {
 			case "ip":
 				logger.Debug(logPrefix, fmt.Sprintf("IP-based rate limit enabled. MaxRate: %f, Capacity: %d", cfg.ClientMaxRate, cfg.ClientCapacity))
-				handlerFunc = NewIpLimiterWithKeyMw(cfg.Key, cfg.ClientMaxRate, cfg.ClientCapacity, logger)(handlerFunc)
+				handlerFunc = NewIpLimiterWithKeyMw(cfg.Key, cfg.ClientMaxRate, cfg.ClientCapacity, &logger)(handlerFunc)
 			case "header":
 				logger.Debug(logPrefix, fmt.Sprintf("Header-based rate limit enabled. MaxRate: %f, Capacity: %d", cfg.ClientMaxRate, cfg.ClientCapacity))
-				handlerFunc = NewHeaderLimiterMw(cfg.Key, cfg.ClientMaxRate, cfg.ClientCapacity, logger)(handlerFunc)
+				handlerFunc = NewHeaderLimiterMw(cfg.Key, cfg.ClientMaxRate, cfg.ClientCapacity, &logger)(handlerFunc)
 			default:
 				logger.Warning(logPrefix, "Unknown strategy", strategy)
 			}
