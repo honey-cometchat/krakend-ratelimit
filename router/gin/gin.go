@@ -92,12 +92,12 @@ func NewEndpointRateLimiterMw(tb *krakendrate.TokenBucket) EndpointMw {
 
 // NewHeaderLimiterMw creates a token ratelimiter using the value of a header as a token
 func NewHeaderLimiterMw(header string, maxRate float64, capacity uint64) EndpointMw {
-	return NewTokenLimiterMw(HeaderTokenExtractor(header), krakendrate.NewMemoryStore(maxRate, int(capacity)))
+	return NewTokenLimiterMw(HeaderTokenExtractor(header), krakendrate.NewMemoryStore(maxRate, int(capacity)), logging.NoOp)
 }
 
 // NewIpLimiterMw creates a token ratelimiter using the IP of the request as a token
 func NewIpLimiterMw(maxRate float64, capacity uint64) EndpointMw {
-	return NewTokenLimiterMw(IPTokenExtractor, krakendrate.NewMemoryStore(maxRate, int(capacity)))
+	return NewTokenLimiterMw(IPTokenExtractor, krakendrate.NewMemoryStore(maxRate, int(capacity)), logging.NoOp)
 }
 
 // NewIpLimiterWithKeyMw creates a token ratelimiter using the IP of the request as a token
@@ -105,7 +105,7 @@ func NewIpLimiterWithKeyMw(header string, maxRate float64, capacity uint64) Endp
 	if header == "" {
 		return NewIpLimiterMw(maxRate, capacity)
 	}
-	return NewTokenLimiterMw(NewIPTokenExtractor(header), krakendrate.NewMemoryStore(maxRate, int(capacity)))
+	return NewTokenLimiterMw(NewIPTokenExtractor(header), krakendrate.NewMemoryStore(maxRate, int(capacity)), logging.NoOp)
 }
 
 // TokenExtractor defines the interface of the functions to use in order to extract a token for each request
@@ -134,10 +134,11 @@ func HeaderTokenExtractor(header string) TokenExtractor {
 }
 
 // NewTokenLimiterMw returns a token based ratelimiting endpoint middleware with the received TokenExtractor and LimiterStore
-func NewTokenLimiterMw(tokenExtractor TokenExtractor, limiterStore krakendrate.LimiterStore) EndpointMw {
+func NewTokenLimiterMw(tokenExtractor TokenExtractor, limiterStore krakendrate.LimiterStore, logger logging.Logger) EndpointMw {
 	return func(next gin.HandlerFunc) gin.HandlerFunc {
 		return func(c *gin.Context) {
 			tokenKey := tokenExtractor(c)
+			logger.Debug("test:test", tokenKey)
 			if tokenKey == "" {
 				c.AbortWithError(http.StatusTooManyRequests, krakendrate.ErrLimited)
 				return
