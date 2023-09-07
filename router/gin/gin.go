@@ -92,6 +92,7 @@ func NewEndpointRateLimiterMw(tb *krakendrate.TokenBucket) EndpointMw {
 
 // NewHeaderLimiterMw creates a token ratelimiter using the value of a header as a token
 func NewHeaderLimiterMw(header string, maxRate float64, capacity uint64) EndpointMw {
+	fmt.Print("NewHeaderLimiterMw", header, maxRate, capacity)
 	return NewTokenLimiterMw(HeaderTokenExtractor(header), krakendrate.NewMemoryStore(maxRate, int(capacity)))
 }
 

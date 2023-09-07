@@ -2,6 +2,7 @@ package krakendrate
 
 import (
 	"context"
+	"fmt"
 	"sync"
 	"time"
 )
@@ -22,6 +23,7 @@ func NewLimiterStore(maxRate float64, capacity int, backend Backend) LimiterStor
 // NewTokenBucket returns a token bucket with the given rate and capacity, using the default clock and
 // an initial stock of cap
 func NewTokenBucket(rate float64, capacity uint64) *TokenBucket {
+	fmt.Print("NewTokenBucket")
 	return NewTokenBucketWithClock(rate, capacity, nil)
 }
 
@@ -53,6 +55,7 @@ func NewTokenBucketWithInitialStock(r float64, capacity, i uint64, c Clock) *Tok
 		r = 1e-9
 	}
 
+	fmt.Print("NewTokenBucketWithInitialStock", r, capacity, i)
 	return &TokenBucket{
 		fillInterval: time.Duration(int64(1e9 / r)),
 		capacity:     capacity,
