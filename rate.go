@@ -16,6 +16,7 @@ func NewMemoryStore(maxRate float64, capacity int) LimiterStore {
 func NewLimiterStore(maxRate float64, capacity int, backend Backend) LimiterStore {
 	f := func() interface{} { return NewTokenBucket(maxRate, uint64(capacity)) }
 	return func(t string) Limiter {
+		fmt.Println("999999999", t)
 		return backend.Load(t, f).(*TokenBucket)
 	}
 }
